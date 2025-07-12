@@ -1,0 +1,10 @@
+mkdir -p _output_
+rustscan -a _target_ > _output_/_target_-rustscan.txt
+testssl _target_ > _output_/_target_-testssl.txt
+nuclei -target _target_ -timeout 20 -page-timeout 35 > _output_/_target_-nuclei.txt
+dsnrecon -d _target_ > _output_/_target_-dnsrecon.txt
+echo _target_ | httpx -silent | xargs -n1 curl -Ls -o /dev/null -D - > _output_/_target_-cookie-headers.txt
+echo _target_ | httpx --silent |  xargs -n1 -I{} wappy -u {} 2>/dev/null > _output_/_target_-technology.txt && echo _target_ | httpx -td --silent >> _output_/_target_-technology.txt
+echo _target_ | httpx --silent | xargs -I{} feroxbuster -u {} --smart --status-codes 200,204,301,302,307,401,500 -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt -q --no-state > _output_/_target_-feroxbuster.txt
+waymore -i _target_ -mode U > _output_/_target_-waymore.txt && httpx -u _target_ --silent | katana --silent > _output_/_target_-katana.txt && cat _output_/_target_-waymore.txt _output_/_target_-katana.txt | sort -u | grep -v -iE 'css|jpg|jpeg|png|gif|svg|woff|ttf|ico'> _output_/_target_-total-endpoints.txt && nuclei -l _output_/_target_-total-endpoints.txt -timeout 20 -page-timeout 35 > _output_/_target_-vulnscan.txt
+grep "\.js" _output_/_target_-total-endpoints.txt | jshunter > _output_/_target_-jshunter.txt
